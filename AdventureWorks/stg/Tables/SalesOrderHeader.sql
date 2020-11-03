@@ -1,0 +1,25 @@
+﻿CREATE TABLE [stg].[SalesOrderHeader] (
+    [SalesOrderID]           INT              NOT NULL,
+    [RevisionNumber]         TINYINT          NOT NULL,
+    [OrderDate]              DATETIME         NOT NULL,
+    [DueDate]                DATETIME         NOT NULL,
+    [ShipDate]               DATETIME         NULL,
+    [Status]                 TINYINT          NOT NULL,
+    [OnlineOrderFlag]        BIT              NOT NULL,
+    [SalesOrderNumber]       AS               (isnull(N'SO'+CONVERT([nvarchar](23),[SalesOrderID],(0)),N'*** ERROR ***')),
+    [PurchaseOrderNumber]    NVARCHAR (25)    NULL,
+    [AccountNumber]          NVARCHAR (15)    NULL,
+    [CustomerID]             INT              NOT NULL,
+    [ShipToAddressID]        INT              NULL,
+    [BillToAddressID]        INT              NULL,
+    [ShipMethod]             NVARCHAR (50)    NOT NULL,
+    [CreditCardApprovalCode] VARCHAR (15)     NULL,
+    [SubTotal]               MONEY            CONSTRAINT [DF_SalesOrderHeader_SubTotal] DEFAULT ((0.00)) NOT NULL,
+    [TaxAmt]                 MONEY            CONSTRAINT [DF_SalesOrderHeader_TaxAmt] DEFAULT ((0.00)) NOT NULL,
+    [Freight]                MONEY            CONSTRAINT [DF_SalesOrderHeader_Freight] DEFAULT ((0.00)) NOT NULL,
+    [TotalDue]               AS               (isnull(([SubTotal]+[TaxAmt])+[Freight],(0))),
+    [Comment]                NVARCHAR (MAX)   NULL,
+    [rowguid]                UNIQUEIDENTIFIER CONSTRAINT [DF_SalesOrderHeader_rowguid] DEFAULT (newid()) NOT NULL,
+    [ModifiedDate]           DATETIME         CONSTRAINT [DF_SalesOrderHeader_ModifiedDate] DEFAULT (getdate()) NOT NULL
+);
+
